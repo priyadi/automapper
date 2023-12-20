@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AutoMapper\Extractor;
 
-use AutoMapper\Transformer\CustomTransformer\CustomTransformersRegistry;
 use AutoMapper\Transformer\TransformerFactoryInterface;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
 use Symfony\Component\PropertyInfo\PropertyReadInfo;
@@ -26,7 +25,6 @@ abstract class MappingExtractor implements MappingExtractorInterface
         protected readonly PropertyReadInfoExtractorInterface $readInfoExtractor,
         protected readonly PropertyWriteInfoExtractorInterface $writeInfoExtractor,
         protected readonly TransformerFactoryInterface $transformerFactory,
-        protected readonly CustomTransformersRegistry $customTransformerRegistry,
         private readonly ?ClassMetadataFactoryInterface $classMetadataFactory = null,
     ) {
     }

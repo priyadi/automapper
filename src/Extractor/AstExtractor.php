@@ -16,15 +16,12 @@ use PhpParser\Parser;
 use PhpParser\ParserFactory;
 
 /**
- * Extracts the code of the given method from a given class and wraps it inside a closure, in order to inject it
- * in the generated mappers.
- *
  * @author Nicolas Philippe <nikophil@gmail.com>
  * @author Baptiste Leduc <baptiste.leduc@gmail.com>
  *
  * @internal
  */
-final readonly class ClassMethodToCallbackExtractor
+final readonly class AstExtractor
 {
     private Parser $parser;
 
@@ -34,6 +31,9 @@ final readonly class ClassMethodToCallbackExtractor
     }
 
     /**
+     * Extracts the code of the given method from a given class, and wraps it inside a closure, in order to inject it
+     * in the generated mappers.
+     *
      * @param class-string $class
      * @param Arg[]        $inputParameters
      */
@@ -61,6 +61,16 @@ final readonly class ClassMethodToCallbackExtractor
 
         if (\count($inputParameters) !== \count($classMethod->getParams())) {
             throw new InvalidArgumentException("Input parameters and method parameters in class \"{$class}\" do not match.");
+        }
+
+        foreach ($classMethod->getParams() as $key => $parameter) {
+            /** @var Expr\Variable $inputParameterValue */
+            $inputParameterValue = $inputParameters[$key]->value;
+
+            if ($parameter->var instanceof Expr\Variable && $inputParameterValue->name !== $parameter->var->name) {
+                $parameterName = \is_string($parameter->var->name) ? $parameter->var->name : 'N/A';
+                throw new InvalidArgumentException("Method parameter \"{$parameterName}\" does not match type \"{$inputParameters[$key]->getType()}\" from input parameter \"{$inputParameters[$key]->name}\" in \"{$class}::{$method}\" method.");
+            }
         }
 
         $closureParameters = [];

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AutoMapper\Tests;
 
 use AutoMapper\AutoMapper;
-use AutoMapper\Extractor\ClassMethodToCallbackExtractor;
 use AutoMapper\Generator\Generator;
 use AutoMapper\Loader\ClassLoaderInterface;
 use AutoMapper\Loader\FileLoader;
@@ -37,7 +36,6 @@ abstract class AutoMapperBaseTest extends TestCase
         $classMetadataFactory = new ClassMetadataFactory(new AttributeLoader());
 
         $this->loader = new FileLoader(new Generator(
-            new ClassMethodToCallbackExtractor(),
             (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
             new ClassDiscriminatorFromClassMetadata($classMetadataFactory),
             $allowReadOnlyTargetToPopulate

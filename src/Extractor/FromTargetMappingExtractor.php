@@ -6,7 +6,6 @@ namespace AutoMapper\Extractor;
 
 use AutoMapper\Exception\InvalidMappingException;
 use AutoMapper\MapperMetadataInterface;
-use AutoMapper\Transformer\CustomTransformer\CustomTransformersRegistry;
 use AutoMapper\Transformer\TransformerFactoryInterface;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
 use Symfony\Component\PropertyInfo\PropertyReadInfo;
@@ -33,11 +32,10 @@ final class FromTargetMappingExtractor extends MappingExtractor
         PropertyReadInfoExtractorInterface $readInfoExtractor,
         PropertyWriteInfoExtractorInterface $writeInfoExtractor,
         TransformerFactoryInterface $transformerFactory,
-        CustomTransformersRegistry $customTransformerRegistry,
         ClassMetadataFactoryInterface $classMetadataFactory = null,
         private readonly ?AdvancedNameConverterInterface $nameConverter = null,
     ) {
-        parent::__construct($propertyInfoExtractor, $readInfoExtractor, $writeInfoExtractor, $transformerFactory, $customTransformerRegistry, $classMetadataFactory);
+        parent::__construct($propertyInfoExtractor, $readInfoExtractor, $writeInfoExtractor, $transformerFactory, $classMetadataFactory);
     }
 
     public function getPropertiesMapping(MapperMetadataInterface $mapperMetadata): array
@@ -63,15 +61,10 @@ final class FromTargetMappingExtractor extends MappingExtractor
             $sourceTypes = [];
 
             foreach ($targetTypes as $type) {
-                $sourceType = $this->transformType($mapperMetadata->getSource(), $type);
-
-                if ($sourceType) {
-                    $sourceTypes[] = $sourceType;
-                }
+                $sourceTypes[] = $this->transformType($mapperMetadata->getSource(), $type);
             }
 
-            $transformer = $this->customTransformerRegistry->getCustomTransformerClass($mapperMetadata, $sourceTypes, $targetTypes, $property)
-                ?? $this->transformerFactory->getTransformer($sourceTypes, $targetTypes, $mapperMetadata);
+            $transformer = $this->transformerFactory->getTransformer($sourceTypes, $targetTypes, $mapperMetadata);
 
             if (null === $transformer) {
                 continue;
