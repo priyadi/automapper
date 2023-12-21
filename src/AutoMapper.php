@@ -8,6 +8,7 @@ use AutoMapper\Exception\NoMappingFoundException;
 use AutoMapper\Extractor\FromSourceMappingExtractor;
 use AutoMapper\Extractor\FromTargetMappingExtractor;
 use AutoMapper\Extractor\MapToContextPropertyInfoExtractorDecorator;
+use AutoMapper\Extractor\PropertyTypeExtractorDecorator;
 use AutoMapper\Extractor\SourceTargetMappingExtractor;
 use AutoMapper\Generator\Generator;
 use AutoMapper\Loader\ClassLoaderInterface;
@@ -181,7 +182,7 @@ class AutoMapper implements AutoMapperInterface, AutoMapperRegistryInterface, Ma
         $phpDocExtractor = new PhpDocExtractor();
         $propertyInfoExtractor = new PropertyInfoExtractor(
             [$reflectionExtractor],
-            [$phpDocExtractor, $reflectionExtractor],
+            [new PropertyTypeExtractorDecorator($phpDocExtractor, $reflectionExtractor)],
             [$reflectionExtractor],
             [new MapToContextPropertyInfoExtractorDecorator($reflectionExtractor)]
         );
